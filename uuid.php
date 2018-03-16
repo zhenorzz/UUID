@@ -17,7 +17,7 @@ class uuid
 {
     static $twepoch = 1399943202863;
     static $timestampLeftShift = 14;
-    static $pidLeftShift = 2;
+    static $pidLeftShift = 6;
     private $workerId = 1;
     public function __construct($workerId = 1)
     {
