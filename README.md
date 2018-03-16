@@ -28,12 +28,6 @@ In the same millisecond, it will use pid for promising the value is unique.
 
 ```
 
-### Is it possible repeat?
-
-Unfortunately, it is possible. 
-
-When use it in PHP without ZTS (Zend Thread Safe), and more than one thread try to get ids in the same millisecond, it will cause race condition.
-
 ### How to resolve race condition?
 
 You can overwrite public method `generate()`, try to get pid value from redis, memcache or any sequence generator which can be daemoned at memory.
