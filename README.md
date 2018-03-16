@@ -4,7 +4,7 @@ generate UUID with concurrency.
 ## Description
 
 ### warning
-Please use 64bits php, because it will overflow.
+Please use 64bits php, because in php32 it will overflow.
 
 ### How's the return value?
 
