@@ -52,7 +52,7 @@ class UUID
         self::$lastTimestamp = $timestamp;
         if ($this->is64Bit()) {
             /* 64bit */
-            $nextId = ((sprintf('%.0f', $timestamp) - sprintf('%.0f', self::twepoch)) << self::timestampLeftShift) | self::$sequence << self::sequenceLeftShift | $this->workerId;
+            $nextId = (((sprintf('%.0f', $timestamp) - sprintf('%.0f', self::twepoch)) << self::timestampLeftShift) | self::$sequence) << self::sequenceLeftShift | $this->workerId;
         } else {
             /* 32bit */
             $nextId = new BigNumber($timestamp);
