@@ -13,7 +13,10 @@
  *
  * auth: zhenorzz@gmail.com
  */
-class uuid
+require "./BigNumber.php";
+use Zhenorzz\Math\BigNumber;
+
+class UUID
 {
     const timestampLeftShift = 14;
     const sequenceLeftShift = 6;
@@ -36,10 +39,6 @@ class uuid
     {
         $timestamp = $this->millisecond();
         $lastTimestamp = self::$lastTimestamp;
-        //判断时钟是否正常
-        if ($timestamp < $lastTimestamp) {
-            throw new Exception("Clock moved backwards.  Refusing to generate id for %d milliseconds", ($lastTimestamp - $timestamp));
-        }
          //生成唯一序列
          if ($lastTimestamp == $timestamp) {
             $sequenceMask = -1 ^ (-1 << self::sequenceBits);
@@ -51,8 +50,18 @@ class uuid
             self::$sequence = 0;
         }
         self::$lastTimestamp = $timestamp;
-
-        $nextId = ((sprintf('%.0f', $timestamp) - sprintf('%.0f', self::twepoch)) << self:: timestampLeftShift ) | self::$sequence << self::sequenceLeftShift | $this->workerId;
+        if ($this->is64Bit()) {
+            /* 64bit */
+            $nextId = ((sprintf('%.0f', $timestamp) - sprintf('%.0f', self::twepoch)) << self::timestampLeftShift) | self::$sequence << self::sequenceLeftShift | $this->workerId;
+        } else {
+            /* 32bit */
+            $nextId = new BigNumber($timestamp);
+            $nextId->subtract(self::twepoch);
+            $nextId->shiftLeft(self::timestampLeftShift);
+            $nextId->add(self::$sequence);
+            $nextId->shiftLeft(self::sequenceLeftShift);
+            $nextId->add($this->workerId);
+        }
         return $nextId;
     }
 
@@ -70,5 +79,16 @@ class uuid
             $timestamp = $this->timeGen();
         }
         return $timestamp;
+    }
+
+    private function is64Bit() 
+    {
+        $int = "9223372036854775807";
+        $int = intval($int);
+        if ($int == 9223372036854775807) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
